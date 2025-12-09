@@ -22,9 +22,9 @@ jobs:
           arch: arm
           aosp-gcc: true
           aosp-clang: true
-          ksu: true
+          ksu: false
           ksu-version: main
           android-version: 11
           aosp-clang-version: r383902
-          disable-lto: true
-          anykernel3: true
+          disable-lto: false
+          anykernel3: false
