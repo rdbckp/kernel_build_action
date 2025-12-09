@@ -469,7 +469,7 @@ runs:
             case "$arg" in
                 CC=*|CXX=*|LD=*|AS=*|AR=*|NM=*|STRIP=*|OBJCOPY=*|OBJDUMP=*|\
                 HOSTCC=*|KBUILD_HOSTCC=*|SHELL=*|MAKEFLAGS=*|MAKE=*|\
-                CROSS_COMPILE=*|CLANG_TRIPLE=*|LLVM=*|CLVM=*|O=*|ARCH=*)
+                CROSS_COMPILE=*|LLVM=*|CLVM=*|O=*|ARCH=*)
                     echo "::warning::Ignoring override of critical variable: $arg"
                     ;;
                 *)
