@@ -10,7 +10,7 @@ inputs:
   kernel-url:
     required: true
   depth:
-    required: false
+    required: true
     default: 1
   vendor:
     required: false
@@ -24,17 +24,17 @@ inputs:
     required: false
     default: vendor
   kernel-branch:
-    required: false
-    default: main
+    required: true
+    default: kernel
   vendor-branch:
     required: false
     default: main
   config:
     required: true
-    default: defconfig
+    default: a02_defconfig
   arch:
     required: true
-    default: arm64
+    default: arm6
   android-version:
     required: false
     default: ""
