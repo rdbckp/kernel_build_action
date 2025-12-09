@@ -519,10 +519,6 @@ runs:
         )
 
         # Set CLANG_TRIPLE based on the architecture
-        if [[ "${{ inputs.arch }}" == "arm" ]]; then
-            CMD_CLANG_TRIPLE="${CMD_CROSS_COMPILE_ARM32}"
-        fi
-
         export PATH="$CMD_PATH:$PATH"
         make \
             CC="$CMD_CC" \
