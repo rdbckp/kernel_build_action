@@ -228,37 +228,18 @@ runs:
             echo "::group::Downloading AOSP GCC"
             if [ -n "${{ inputs.android-version }}" ]; then
                 AOSP_GCC64_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
-                AOSP_GCC32_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
                 AOSP_GCC_BRANCH="android${{ inputs.android-version }}-release"
-            else
-                AOSP_GCC64_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz"
-                AOSP_GCC32_URL="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz"
             fi
-            download_and_extract "$AOSP_GCC64_URL" "gcc-aarch64" "$HOME/gcc-64" "${AOSP_GCC_BRANCH:-main}"
             download_and_extract "$AOSP_GCC32_URL" "gcc-arm" "$HOME/gcc-32" "${AOSP_GCC_BRANCH:-main}"
             echo "::endgroup::"
         elif [ -n "${{ inputs.other-gcc64-url }}" ] || [ -n "${{ inputs.other-gcc32-url }}" ]; then
             echo "::group::Downloading Third-party GCC"
-            if [ -n "${{ inputs.other-gcc64-url }}" ]; then
-                download_and_extract "${{ inputs.other-gcc64-url }}" "gcc-aarch64" "$HOME/gcc-64" "${{ inputs.other-gcc64-branch }}"
-            fi
             if [ -n "${{ inputs.other-gcc32-url }}" ]; then
                 download_and_extract "${{ inputs.other-gcc32-url }}" "gcc-arm" "$HOME/gcc-32" "${{ inputs.other-gcc32-branch }}"
             fi
             echo "::endgroup::"
         fi
 
-        if [ -d "$HOME/gcc-64" ]; then
-            if [ ! -d "$HOME/gcc-64/bin" ]; then
-                # Move nested directories up if bin is not at the expected location
-                for dir in "$HOME/gcc-64"/*/*; do
-                    if [ -d "$dir" ]; then
-                        mv "$dir"/* "$HOME/gcc-64/" 2>/dev/null || true
-                        break
-                    fi
-                done
-            fi
-        fi
         if [ -d "$HOME/gcc-32" ]; then
             if [ ! -d "$HOME/gcc-32/bin" ]; then
                 # Move nested directories up if bin is not at the expected location
@@ -290,8 +271,8 @@ runs:
         cd "kernel/${{ inputs.kernel-dir }}"
 
         # Set up GCC-related variables
-        if [ -d "$HOME/gcc-64/bin" ] || [ -d "$HOME/gcc-32/bin" ]; then
-            for GCC_DIR in "$HOME/gcc-64" "$HOME/gcc-32"; do
+        if [ -d "$HOME/gcc-32/bin" ]; then
+            for GCC_DIR in "$HOME/gcc-32"; do
                 find "$GCC_DIR"/*/*/bin -type d -exec sh -c 'mv "$(dirname "$1")"/* "$2"/' _ {} "$GCC_DIR" \; -quit >/dev/null 2>&1 || true
                 if [ -d "$GCC_DIR/bin" ]; then
                     for FILE in "$GCC_DIR/bin"/*; do
@@ -307,7 +288,6 @@ runs:
                         done < <(find "$GCC_DIR" -mindepth 1 -maxdepth 1 -type d | sort -r)
                         if [ -n "$MATCHED_DIR" ]; then
                             case "$GCC_DIR" in
-                                "$HOME/gcc-64") GCC64="$MATCHED_DIR" ;;
                                 "$HOME/gcc-32") GCC32="$MATCHED_DIR" ;;
                             esac
                             break
